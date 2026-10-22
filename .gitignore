@@ -1,5 +1,7 @@
 # Keep this repository limited to the EscolaAPI project.
 /*
+!/.gitignore
+!/README.md
 !/GustavoRFerri/
 GustavoRFerri/*
 !/GustavoRFerri/EscolaAPI/
