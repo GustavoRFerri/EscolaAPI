@@ -1,5 +1,6 @@
 ﻿using Escola.Application.DTOs.Curso;
-using Escola.Application.DTOs.Interfaces;
+using Escola.Application.Interfaces;
+using Escola.Domain.Entities;
 using Escola.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -16,32 +17,85 @@ namespace Escola.Application.Services
             _cursoRepository = cursoRepository;
         }
 
-
-
-
-        public Task<CursoGetDTO> AddAsync(CursoPostDTO cursoPostDTO)
+        public async Task<CursoGetDTO> AddAsync(CursoPostDTO cursoPostDTO)
         {
-            throw new NotImplementedException();
+            var curso = new Curso
+            {
+                Nome = cursoPostDTO.Nome,
+                Descricao = cursoPostDTO.Descricao
+            };
+            await _cursoRepository.AddAsync(curso);
+            return new CursoGetDTO
+            {
+                Id = curso.Id,
+                Nome = curso.Nome,
+                Descricao = curso.Descricao
+            };
         }
 
-        public Task<CursoGetDTO> DeleteAsync(int id)
+        public async Task<CursoGetDTO> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var deletedCurso = await _cursoRepository.DeleteAsync(id);
+
+            if (deletedCurso == null)
+            {
+                throw new Exception($"Curso with id {id} not found.");
+            }
+            return new CursoGetDTO
+            {
+                Id = deletedCurso.Id,
+                Nome = deletedCurso.Nome,
+                Descricao = deletedCurso.Descricao
+            };
         }
 
-        public Task<List<CursoGetDTO>> GetAllAsync()
+        public async Task<List<CursoGetDTO>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var cursos = await _cursoRepository.GetAllAsync();
+
+            return cursos.Select(c => new CursoGetDTO
+            {
+                Id = c.Id,
+                Nome = c.Nome,
+                Descricao = c.Descricao
+            }).ToList();
         }
 
-        public Task<CursoGetDTO> GetByIdAsync(int id)
+        public async Task<CursoGetDTO> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var curso = await   _cursoRepository.GetByIdAsync(id);
+            if (curso == null)
+            {
+                throw new Exception($"Curso with id {id} not found.");
+            }
+
+            return new CursoGetDTO
+            {
+                Id = curso.Id,
+                Nome = curso.Nome,
+                Descricao = curso.Descricao
+            };
         }
 
-        public Task<CursoGetDTO> UpdateAsync(CursoPutDTO cursoPutDTO)
+        public async Task<CursoGetDTO> UpdateAsync(CursoPutDTO cursoPutDTO)
         {
-            throw new NotImplementedException();
+            var curso = new Curso
+            {
+                Id = cursoPutDTO.Id,
+                Nome = cursoPutDTO.Nome,
+                Descricao = cursoPutDTO.Descricao
+            };
+            var updatedCurso = await _cursoRepository.UpdateAsync(curso);
+            if (updatedCurso == null)
+            {
+                throw new Exception($"Curso with id {cursoPutDTO.Id} not found.");
+            }
+            return new CursoGetDTO
+            {
+                Id = updatedCurso.Id,
+                Nome = updatedCurso.Nome,
+                Descricao = updatedCurso.Descricao
+            };
         }
     }
 }

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Escola.Application.DTOs.Interfaces;
+namespace Escola.Application.Interfaces;
 
 public interface ICursoService
 {
