@@ -13,5 +13,6 @@ public class Usuario
     public byte[] PasswordSalt { get; set; }
     public string Perfil { get; set; }
     public ICollection<Matricula> Matriculas { get; set; }
+    public bool Excluido { get; set; }
 }
 

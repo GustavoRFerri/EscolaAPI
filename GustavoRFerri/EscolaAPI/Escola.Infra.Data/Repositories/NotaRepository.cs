@@ -1,5 +1,7 @@
 ﻿using Escola.Domain.Entities;
 using Escola.Domain.Interfaces;
+using Escola.Infra.Data.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,28 +10,47 @@ namespace Escola.Infra.Data.Repositories;
 
 public class NotaRepository : INotaRepository
 {
-    public Task<Nota> AddAsync(Nota nota)
+    private readonly ApplicationDbContext _context;
+
+    public NotaRepository(ApplicationDbContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
+    }
+    public async Task<Nota> AddAsync(Nota nota)
+    {
+        _context.Nota.Add(nota);
+        await _context.SaveChangesAsync();
+        return nota;
     }
 
-    public Task<Nota> DeleteAsync(int id)
+    public async Task<Nota> DeleteAsync(int id)
     {
-        throw new NotImplementedException();
+        var nota = await _context.Nota.Where(x => x.Excluido == false && x.Id == id).FirstOrDefaultAsync();
+
+        if (nota == null)
+            return null;
+
+        nota.Excluido = true;
+
+        _context.Nota.Update(nota);
+        await _context.SaveChangesAsync();
+        return nota;
     }
 
-    public Task<List<Nota>> GetAllAsync()
+    public async Task<List<Nota>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return await _context.Nota.Where(x => x.Excluido == false).ToListAsync();
     }
 
-    public Task<Nota> GetByIdAsync(int id)
+    public async Task<Nota> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await _context.Nota.Where(x => x.Excluido == false && x.Id == id).FirstOrDefaultAsync();
     }
 
-    public Task<Nota> UpdateAsync(Nota nota)
+    public async Task<Nota> UpdateAsync(Nota nota)
     {
-        throw new NotImplementedException();
+        _context.Nota.Update(nota);
+        await _context.SaveChangesAsync();
+        return nota;
     }
 }

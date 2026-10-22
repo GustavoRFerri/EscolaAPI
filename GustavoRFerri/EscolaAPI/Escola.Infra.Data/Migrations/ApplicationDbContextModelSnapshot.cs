@@ -65,6 +65,9 @@ namespace Escola.Infra.Data.Migrations
                     b.Property<DateTime>("DataMatricula")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("TurmaId")
                         .HasColumnType("integer");
 
@@ -87,6 +90,12 @@ namespace Escola.Infra.Data.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DataNota")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("MatriculaId")
                         .HasColumnType("integer");
@@ -117,6 +126,9 @@ namespace Escola.Infra.Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -141,6 +153,9 @@ namespace Escola.Infra.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
+
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Nome")
                         .IsRequired()

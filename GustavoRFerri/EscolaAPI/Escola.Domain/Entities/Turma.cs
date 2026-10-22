@@ -12,4 +12,5 @@ public class Turma
     public int CursoId { get; set; }    
     public ICollection<Matricula> Matriculas { get; set; }
     public Curso Curso { get; set; }
+    public bool Excluido { get; set; }
 }
