@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Escola.Infra.Data.Repositories;
 
-public class TurmaRepository : ITurmaRepsitory
+public class TurmaRepository : ITurmaRepository
 {
     private readonly ApplicationDbContext _context;
 
@@ -18,9 +18,16 @@ public class TurmaRepository : ITurmaRepsitory
     }
     public async Task<Turma> AddAsync(Turma turma)
     {
-        _context.Turma.Add(turma);
-        await _context.SaveChangesAsync();
-        return turma;
+        try
+        {
+            _context.Turma.Add(turma);
+            await _context.SaveChangesAsync();
+            return turma;
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 
     public async Task<Turma> DeleteAsync(int id)
@@ -39,12 +46,12 @@ public class TurmaRepository : ITurmaRepsitory
 
     public async Task<List<Turma>> GetAllAsync()
     {
-        return await _context.Turma.Where(x => x.Excluido == false).ToListAsync();
+        return await _context.Turma.Include(x => x.Curso).Where(x => x.Excluido == false).ToListAsync();
     }
 
     public async Task<Turma> GetByIdAsync(int id)
     {
-        return await _context.Turma.Where(x => x.Excluido == false && x.Id == id).FirstOrDefaultAsync();
+        return await _context.Turma.Include(x => x.Curso).Where(x => x.Excluido == false && x.Id == id).FirstOrDefaultAsync();
     }
 
     public async Task<Turma> UpdateAsync(Turma turma)

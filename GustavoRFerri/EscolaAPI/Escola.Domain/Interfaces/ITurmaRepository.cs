@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Escola.Domain.Interfaces;
 
-public interface ITurmaRepsitory
+public interface ITurmaRepository
 {
     Task<Turma> GetByIdAsync(int id);
     //Task<IEnumerable<Curso>> GetAllAsync();

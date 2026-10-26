@@ -12,7 +12,6 @@ namespace Escola.Application.Services;
 
 public class MatriculaService : IMatriculaService
 {
-
     private readonly IMatriculaRepository _matriculaRepository;
 
     public MatriculaService(IMatriculaRepository matriculaRepository)
@@ -74,7 +73,19 @@ public class MatriculaService : IMatriculaService
                 
                 DataMatricula = matricula.DataMatricula,
                 DataExpiracao = matricula.DataExpiracao,
-                Ativa = matricula.Ativa
+                Ativa = matricula.Ativa,
+                Usuario = new UsuarioGetDTO
+                {
+                    Id = matricula.Usuario.Id,
+                    Nome = matricula.Usuario.Nome,
+                    Email = matricula.Usuario.Email
+                },
+                Turma = new TurmaGetDTO
+                {
+                    Id = matricula.Turma.Id,
+                    Nome = matricula.Turma.Nome,
+                    Descricao = matricula.Turma.Descricao
+                }
             });
         }
         return Task.FromResult(matriculaGetDTOs);
@@ -109,7 +120,7 @@ public class MatriculaService : IMatriculaService
         };
     }
 
-    public Task<MatriculaGetDTO> UpdateAsync(MatriculaPutDTO matriculaPutDTO)
+    public async Task<MatriculaGetDTO> UpdateAsync(MatriculaPutDTO matriculaPutDTO)
     {
         var matricula = new Matricula
         {
@@ -117,14 +128,12 @@ public class MatriculaService : IMatriculaService
             TurmaId = matriculaPutDTO.TurmaId,
             DataExpiracao = matriculaPutDTO.DataExpiracao            
         };
-        var result = _matriculaRepository.UpdateAsync(matricula);
 
-        if (result == null)
-        {
-            throw new Exception("Matrícula não encontrada.");
-        }
+        var result = await _matriculaRepository.UpdateAsync(matricula);
+        if (result == null)        
+            throw new Exception("Matrícula não encontrada.");        
 
-        return Task.FromResult(new MatriculaGetDTO
+        return new MatriculaGetDTO
         {
             Id = matricula.Id,
             UsuarioId = matricula.UsuarioId,
@@ -132,9 +141,7 @@ public class MatriculaService : IMatriculaService
             DataMatricula = matricula.DataMatricula,
             DataExpiracao = matricula.DataExpiracao,
             Ativa = matricula.Ativa
-        });
-
+        };
     }
 
-   
 }

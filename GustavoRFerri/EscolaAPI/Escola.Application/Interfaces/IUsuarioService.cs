@@ -1,5 +1,6 @@
 ﻿using Escola.Application.DTOs.Turma;
 using Escola.Application.DTOs.Usuario;
+using Escola.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
