@@ -2,6 +2,7 @@
 using Escola.Application.DTOs.Nota;
 using Escola.Application.DTOs.Turma;
 using Escola.Application.DTOs.Usuario;
+using Escola.Application.Exceptions;
 using Escola.Application.Interfaces;
 using Escola.Domain.Entities;
 using Escola.Domain.Interfaces;
@@ -13,16 +14,21 @@ namespace Escola.Application.Services;
 
 public class NotaService : INotaService
 {
-
     private readonly INotaRepository _notaRepository;
+    private readonly IMatriculaService _matriculaService;
 
-    public NotaService(INotaRepository notaRepository)
+    public NotaService(INotaRepository notaRepository, IMatriculaService matriculaService)
     {
         _notaRepository = notaRepository;
+        _matriculaService = matriculaService;
     }
 
     public Task<NotaGetDTO> AddAsync(NotaPostDTO notaPostDTO)
     {
+        var matricula = _matriculaService.GetByIdAsync(notaPostDTO.MatriculaId).Result;
+        if (matricula == null)        
+            throw new NotFoundException("Matrícula não encontrada.");        
+
         var nota = new Nota
         {
             MatriculaId = notaPostDTO.MatriculaId,           
@@ -42,7 +48,7 @@ public class NotaService : INotaService
         var deletedNota = await _notaRepository.DeleteAsync(id);
 
         if (deletedNota == null)        
-            throw new Exception("Nota não encontrada.");        
+            throw new NotFoundException("Nota não encontrada.");        
 
         return new NotaGetDTO
         {
@@ -74,7 +80,7 @@ public class NotaService : INotaService
     {
         var nota = await _notaRepository.GetByIdAsync(id);
         if (nota == null)        
-            throw new Exception("Nota não encontrada.");        
+            throw new NotFoundException("Nota não encontrada.");        
 
         return new NotaGetDTO
         {
@@ -86,6 +92,10 @@ public class NotaService : INotaService
 
     public Task<NotaGetDTO> UpdateAsync(NotaPutDTO notaPutDTO)
     {
+        var matricula = _matriculaService.GetByIdAsync(notaPutDTO.MatriculaId).Result;
+        if (matricula == null)
+            throw new NotFoundException("Matrícula não encontrada.");
+
         var nota = new Nota
         {
             Id = notaPutDTO.Id,
@@ -95,7 +105,7 @@ public class NotaService : INotaService
 
         if (result == null)
         {
-            throw new Exception("Nota não encontrada.");
+            throw new NotFoundException("Nota não encontrada.");
         }
 
         return Task.FromResult(new NotaGetDTO   

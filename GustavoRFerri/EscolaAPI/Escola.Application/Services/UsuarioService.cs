@@ -1,4 +1,5 @@
 ﻿using Escola.Application.DTOs.Usuario;
+using Escola.Application.Exceptions;
 using Escola.Application.Interfaces;
 using Escola.Domain.Entities;
 using Escola.Domain.Interfaces;
@@ -47,10 +48,9 @@ public class UsuarioService : IUsuarioService
     public async Task<UsuarioGetDTO> DeleteAsync(int id)
     {
         var deleteUsuario = await _usuarioRepository.DeleteAsync(id);
-        if (deleteUsuario == null)
-        {
-            throw new Exception("Usuário não encontrado.");
-        }
+        if (deleteUsuario == null)        
+            throw new NotFoundException("Usuário não encontrado.");
+        
         return  new UsuarioGetDTO
         {
             Id = deleteUsuario.Id,
@@ -80,10 +80,9 @@ public class UsuarioService : IUsuarioService
     public async Task<UsuarioGetDTO> GetByIdAsync(int id)
     {
         var usuario = await _usuarioRepository.GetByIdAsync(id);
-        if (usuario == null)
-        {
-            throw new Exception("Usuário não encontrado.");
-        }
+        if (usuario == null)        
+            throw new NotFoundException("Usuário não encontrado.");
+        
         return new UsuarioGetDTO
         {
             Id = usuario.Id,
@@ -97,10 +96,8 @@ public class UsuarioService : IUsuarioService
     public async Task<UsuarioGetDTO> UpdateAsync(int id, UsuarioPutDTO usuarioPutDTO)
     {
         var usuario = await _usuarioRepository.GetByIdAsync(id);
-        if (usuario == null)
-        {
-            throw new Exception("Usuário não encontrado.");
-        }
+        if (usuario == null)        
+            throw new NotFoundException("Usuário não encontrado.");        
 
         usuario.Nome = usuarioPutDTO.Nome;
         usuario.Email = usuarioPutDTO.Email;
