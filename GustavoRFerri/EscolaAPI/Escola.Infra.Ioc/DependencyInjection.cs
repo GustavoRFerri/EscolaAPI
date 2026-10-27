@@ -26,6 +26,11 @@ public static class DependencyInjection
                 b=> b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName));
         });
 
+        services.AddAuthentication(Options =>
+        {
+            Options.DefaultAuthenticateScheme = "JwtBearer";
+        });
+
         services.AddScoped<ICursoRepository, CursoRepository>();
         services.AddScoped<IMatriculaRepository, MatriculaRepository>();
         services.AddScoped<INotaRepository, NotaRepository>();

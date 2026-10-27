@@ -25,17 +25,15 @@ public class MatriculaService : IMatriculaService
         _usuarioService = usuarioService;
     }
 
-    public Task<MatriculaGetDTO> AddAsync(MatriculaPostDTO matriculaPostDTO)
-    {
-        var usuario = _usuarioService.GetByIdAsync(matriculaPostDTO.UsuarioId).Result;
-        var turma = _turmaService.GetByIdAsync(matriculaPostDTO.TurmaId).Result;
+    public async Task<MatriculaGetDTO> AddAsync(MatriculaPostDTO matriculaPostDTO)
+    {        
 
-        if (turma == null)        
-            throw new NotFoundException($"Turma não encontrados.");        
+        if (await _usuarioService.GetByIdAsync(matriculaPostDTO.UsuarioId) == null)        
+            throw new NotFoundException($"Usuário com id {matriculaPostDTO.UsuarioId} não encontrado.");        
 
-        if (usuario == null)        
-            throw new NotFoundException($"Usuário não encontrados.");       
-
+        if (await _turmaService.GetByIdAsync(matriculaPostDTO.TurmaId) == null)
+            throw new NotFoundException($"Turma com id {matriculaPostDTO.TurmaId} não encontrada.");
+        
 
         var matricula = new Matricula
         {
@@ -46,7 +44,7 @@ public class MatriculaService : IMatriculaService
             Ativa = true
         };
         var result = _matriculaRepository.AddAsync(matricula);
-        return Task.FromResult(new MatriculaGetDTO
+        return new MatriculaGetDTO
         {
             Id = matricula.Id,
             UsuarioId = matricula.UsuarioId,
@@ -54,7 +52,7 @@ public class MatriculaService : IMatriculaService
             DataMatricula = matricula.DataMatricula,
             DataExpiracao = matricula.DataExpiracao,
             Ativa = matricula.Ativa
-        });
+        };
     }
 
     public async Task<MatriculaGetDTO> DeleteAsync(int id)
@@ -62,8 +60,7 @@ public class MatriculaService : IMatriculaService
         var deletedMatricula = await _matriculaRepository.DeleteAsync(id);
 
         if (deletedMatricula == null)        
-            throw new NotFoundException("Matrícula não encontrada.");
-        
+            throw new NotFoundException("Matrícula não encontrada.");        
         
         return new MatriculaGetDTO
         {
@@ -135,13 +132,11 @@ public class MatriculaService : IMatriculaService
     }
 
     public async Task<MatriculaGetDTO> UpdateAsync(MatriculaPutDTO matriculaPutDTO)
-    { 
-        var matriculaExistente = await _matriculaRepository.GetByIdAsync(matriculaPutDTO.Id);
-        if (matriculaExistente == null)
-            throw new NotFoundException($"Matrícula não encontrada.");
+    {
+        if (await _matriculaRepository.GetByIdAsync(matriculaPutDTO.Id) == null)
+            throw new NotFoundException("Matrícula não encontrada.");
 
-        var turma = _turmaService.GetByIdAsync(matriculaPutDTO.TurmaId).Result;
-        if (turma == null)
+        if ( await _turmaService.GetByIdAsync(matriculaPutDTO.TurmaId) == null)        
             throw new NotFoundException($"Turma não encontrados.");
 
         var matricula = new Matricula

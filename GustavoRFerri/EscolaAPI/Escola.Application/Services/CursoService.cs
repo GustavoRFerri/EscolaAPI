@@ -34,6 +34,22 @@ namespace Escola.Application.Services
             };
         }
 
+
+        public async Task<CursoGetDTO> GetByIdAsync(int id)
+        {
+            var curso = await _cursoRepository.GetByIdAsync(id);
+            if (curso == null)
+                throw new NotFoundException($"Curso with id {id} not found.");
+
+            return new CursoGetDTO
+            {
+                Id = curso.Id,
+                Nome = curso.Nome,
+                Descricao = curso.Descricao
+            };
+        }
+
+
         public async Task<CursoGetDTO> DeleteAsync(int id)
         {
             var deletedCurso = await _cursoRepository.DeleteAsync(id);
@@ -61,20 +77,7 @@ namespace Escola.Application.Services
             }).ToList();
         }
 
-        public async Task<CursoGetDTO> GetByIdAsync(int id)
-        {
-            var curso = await   _cursoRepository.GetByIdAsync(id);
-            if (curso == null)            
-                throw new NotFoundException($"Curso with id {id} not found.");            
-
-            return new CursoGetDTO
-            {
-                Id = curso.Id,
-                Nome = curso.Nome,
-                Descricao = curso.Descricao
-            };
-        }
-
+     
         public async Task<CursoGetDTO> UpdateAsync(CursoPutDTO cursoPutDTO)
         {
             var curso = new Curso

@@ -23,11 +23,10 @@ public class NotaService : INotaService
         _matriculaService = matriculaService;
     }
 
-    public Task<NotaGetDTO> AddAsync(NotaPostDTO notaPostDTO)
-    {
-        var matricula = _matriculaService.GetByIdAsync(notaPostDTO.MatriculaId).Result;
-        if (matricula == null)        
-            throw new NotFoundException("Matrícula não encontrada.");        
+    public async Task<NotaGetDTO> AddAsync(NotaPostDTO notaPostDTO)
+    {        
+        if (await _matriculaService.GetByIdAsync(notaPostDTO.MatriculaId) == null)        
+            throw new NotFoundException("Matrícula não encontrada.");
 
         var nota = new Nota
         {
@@ -35,12 +34,12 @@ public class NotaService : INotaService
             DataNota = DateTime.Now
         };
         var result = _notaRepository.AddAsync(nota);
-        return Task.FromResult(new NotaGetDTO
+        return new NotaGetDTO
         {
             Id = nota.Id,
             MatriculaId = nota.MatriculaId,            
             DataNota = nota.DataNota
-        });
+        };
     }
 
     public async Task<NotaGetDTO> DeleteAsync(int id)
@@ -90,30 +89,33 @@ public class NotaService : INotaService
         };
     }
 
-    public Task<NotaGetDTO> UpdateAsync(NotaPutDTO notaPutDTO)
+    public async Task<NotaGetDTO> UpdateAsync(NotaPutDTO notaPutDTO)
     {
-        var matricula = _matriculaService.GetByIdAsync(notaPutDTO.MatriculaId).Result;
-        if (matricula == null)
-            throw new NotFoundException("Matrícula não encontrada.");
-
-        var nota = new Nota
-        {
-            Id = notaPutDTO.Id,
-            MatriculaId = notaPutDTO.MatriculaId            
-        };
-        var result = _notaRepository.UpdateAsync(nota);
-
-        if (result == null)
-        {
+        var existingNota = _notaRepository.GetByIdAsync(notaPutDTO.Id).Result;
+        if (existingNota == null)
             throw new NotFoundException("Nota não encontrada.");
+
+
+        if (notaPutDTO.MatriculaId != existingNota.MatriculaId)
+        {            
+            if (await _matriculaService.GetByIdAsync(notaPutDTO.MatriculaId) == null)
+                throw new NotFoundException("Matrícula não encontrada.");
+
+            existingNota.MatriculaId = notaPutDTO.MatriculaId;
         }
 
-        return Task.FromResult(new NotaGetDTO   
+        existingNota.ValorNota = notaPutDTO.ValorNota;
+        existingNota.Aprovado = notaPutDTO.ValorNota >= 60; // Assuming 6 is the passing grade
+        var updatedNota = await _notaRepository.UpdateAsync(existingNota);
+
+        return new NotaGetDTO   
         {
-            Id = nota.Id,
-            MatriculaId = nota.MatriculaId,
-            DataNota = nota.DataNota
-        });
+            Id = updatedNota.Id,
+            MatriculaId = updatedNota.MatriculaId,
+            ValorNota = updatedNota.ValorNota,
+            Aprovado = updatedNota.Aprovado,
+            DataNota = updatedNota.DataNota
+        };
     }
 }
 
