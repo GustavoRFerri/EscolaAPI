@@ -1,7 +1,9 @@
 ﻿using Escola.Application.Interfaces;
 using Escola.Application.Services;
+using Escola.Domain.Account;
 using Escola.Domain.Interfaces;
 using Escola.Infra.Data.Context;
+using Escola.Infra.Data.Identity;
 using Escola.Infra.Data.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +61,7 @@ public static class DependencyInjection
         services.AddScoped<INotaService, NotaService>();
         services.AddScoped<IMatriculaService, MatriculaService>();
         services.AddScoped<IUsuarioService, UsuarioService>();
+        services.AddScoped<IAuthenticate, AuthenticateService>();
 
         return services;
 

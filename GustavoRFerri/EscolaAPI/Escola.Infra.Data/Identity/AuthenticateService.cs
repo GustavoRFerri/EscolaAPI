@@ -22,24 +22,30 @@ namespace Escola.Infra.Data.Identity
             _configuration = configuration;  
         }
 
-        public string GenerateToken(int id, string email)
+        public string GenerateToken(int id, string email, string role)
         {
-            throw new NotImplementedException();
+            var claims = new[]
+            {
+                new Claim("id", id.ToString()),
+                new Claim("id", email.ToLower()),
+                new Claim(ClaimTypes.Role, "User"),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            };
+
+            var privateKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
+            var credentials = new SigningCredentials(privateKey, SecurityAlgorithms.HmacSha256);
+            
+            JwtSecurityToken token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(1),
+                signingCredentials: credentials
+                );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
-        //public string GenerateToken(int id, string email, string role)
-        //{
-        //    var claims = new[]
-        //    {
-        //        new Claim("id", id.ToString()),
-        //        new Claim("id", email.ToLower()),
-        //        new Claim(ClaimTypes.Role, "User"),
-        //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        //    };
-
-        //    var primaryKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
-
-        //}
+       
 
         public Task<Usuario> GetUsuarioByEmail(string email)
         {
