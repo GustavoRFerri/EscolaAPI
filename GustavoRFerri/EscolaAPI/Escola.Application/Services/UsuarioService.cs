@@ -25,13 +25,17 @@ public class UsuarioService : IUsuarioService
         byte[] senhaHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(usuarioPostDTO.Senha));
         byte[] senhaSalt = hmac.Key;
 
+        var usuarioExistente = await _usuarioRepository.ExisteUsuarioAsync(usuarioPostDTO.Email);
+        if (usuarioExistente)
+            throw new NotFoundException("Usuário já cadastrado.");
+
         var usuario = new Usuario
         {
             Nome = usuarioPostDTO.Nome,
             Email = usuarioPostDTO.Email,
             PasswordHash = senhaHash,
             PasswordSalt = senhaSalt,
-            Perfil = "Usuario",
+            Perfil = usuarioExistente ? "Aluno" : "Administrador"
         };
 
         var usuarioGetDTO = await _usuarioRepository.AddAsync(usuario);
@@ -58,6 +62,11 @@ public class UsuarioService : IUsuarioService
             Email = deleteUsuario.Email
         };
 
+    }
+
+    public Task<bool> ExisteUsuarioAsync(string email)
+    {
+        return _usuarioRepository.ExisteUsuarioAsync(email);
     }
 
     public async Task<List<UsuarioGetDTO>> GetAllAsync()

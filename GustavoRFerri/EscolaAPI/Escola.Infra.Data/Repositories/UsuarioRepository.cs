@@ -37,6 +37,11 @@ public class UsuarioRepository : IUsuarioRepository
         return usuario;
     }
 
+    public Task<bool> ExisteUsuarioAsync(string email)
+    {
+        return _context.Usuario.AnyAsync(x => x.Excluido == false);
+    }
+
     public async Task<List<Usuario>> GetAllAsync()
     {
         return await _context.Usuario.Where(x => x.Excluido == false).ToListAsync();
