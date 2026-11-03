@@ -50,6 +50,10 @@ public static class DependencyInjection
             };            
         });
 
+
+
+        services.AddAuthorization();
+
         services.AddScoped<ICursoRepository, CursoRepository>();
         services.AddScoped<IMatriculaRepository, MatriculaRepository>();
         services.AddScoped<INotaRepository, NotaRepository>();

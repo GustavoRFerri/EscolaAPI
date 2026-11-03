@@ -26,8 +26,8 @@ public class UsuarioService : IUsuarioService
         byte[] senhaSalt = hmac.Key;
 
         var usuarioExistente = await _usuarioRepository.ExisteUsuarioAsync(usuarioPostDTO.Email);
-        if (usuarioExistente)
-            throw new NotFoundException("Usuário já cadastrado.");
+        //if (usuarioExistente)
+        //    throw new NotFoundException("Usuário já cadastrado.");
 
         var usuario = new Usuario
         {
@@ -43,7 +43,8 @@ public class UsuarioService : IUsuarioService
         {
             Id = usuarioGetDTO.Id,
             Nome = usuarioGetDTO.Nome,
-            Email = usuarioGetDTO.Email
+            Email = usuarioGetDTO.Email,
+            Perfil = usuarioGetDTO.Perfil
         };
     }
 
@@ -59,7 +60,8 @@ public class UsuarioService : IUsuarioService
         {
             Id = deleteUsuario.Id,
             Nome = deleteUsuario.Nome,
-            Email = deleteUsuario.Email
+            Email = deleteUsuario.Email,
+            Perfil = deleteUsuario.Perfil
         };
 
     }
@@ -79,7 +81,8 @@ public class UsuarioService : IUsuarioService
             {
                 Id = usuario.Id,
                 Nome = usuario.Nome,
-                Email = usuario.Email
+                Email = usuario.Email,
+                Perfil = usuario.Perfil
             });
         }
         return usuarioGetDTOs;
@@ -96,7 +99,8 @@ public class UsuarioService : IUsuarioService
         {
             Id = usuario.Id,
             Nome = usuario.Nome,
-            Email = usuario.Email
+            Email = usuario.Email,
+            Perfil = usuario.Perfil
         };
     }
 
@@ -116,7 +120,8 @@ public class UsuarioService : IUsuarioService
         {
             Id = updatedUsuario.Id,
             Nome = updatedUsuario.Nome,
-            Email = updatedUsuario.Email
+            Email = updatedUsuario.Email,
+            Perfil = updatedUsuario.Perfil
         };
     }
 }

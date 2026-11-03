@@ -46,6 +46,8 @@ public class CursoController : Controller
         return Ok(curso);
     }
 
+        
+
     [HttpGet]
     public async Task<IActionResult> GetAllCursos()
     {

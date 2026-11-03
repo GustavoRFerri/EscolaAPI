@@ -39,7 +39,7 @@ public class UsuarioRepository : IUsuarioRepository
 
     public Task<bool> ExisteUsuarioAsync(string email)
     {
-        return _context.Usuario.AnyAsync(x => x.Excluido == false);
+        return _context.Usuario.AnyAsync(x => x.Email == email && x.Excluido == false);
     }
 
     public async Task<List<Usuario>> GetAllAsync()

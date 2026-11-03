@@ -16,13 +16,13 @@ builder.Services.AddSwaggerGen(options =>
     {
         Name = "Authorization",
         Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
+        Scheme = "bearer",
+        BearerFormat = "Jwt",
         Description = "JWT Authorization header using the Bearer scheme"
     });
-    options.AddSecurityRequirement(document =>new OpenApiSecurityRequirement
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
     {
-        [new OpenApiSecuritySchemeReference("bearer",document)] = []        
+         [new OpenApiSecuritySchemeReference("Bearer", document)] = []        
     });
 });
 
@@ -38,11 +38,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<ExceptionMiddleware>();
-
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapControllers();
 
